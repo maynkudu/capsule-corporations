@@ -6,8 +6,8 @@ import { BiChevronDown } from "react-icons/bi";
 const Navbar = () => {
   return (
     <>
-      <div className="flex items-center justify-between w-full px-10 py-5 fixed">
-        <div>CapsD</div>
+      <div className="flex items-center justify-between w-full px-10 py-5 fixed z-50">
+        <div>Capsule</div>
         <div className=" flex justify-center items-center gap-5">
           <Link
             href={"/products"}
