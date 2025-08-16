@@ -4,7 +4,6 @@ import "./globals.css";
 import SmoothScroll from "@/components/lenis/smooth-scroll";
 import CookiePopup from "@/components/common/cookie-popup";
 import CardNav, { CardNavItem } from "@/components/common/navbar/floating-nav";
-import { GlobalMouseProvider } from "@/components/newer/global-mouse-tracker";
 
 export default function ClientLayout({
   children,
@@ -45,7 +44,6 @@ export default function ClientLayout({
 
   return (
     <>
-      <GlobalMouseProvider>
         <CookiePopup />
         <SmoothScroll>
           {children}
@@ -60,9 +58,6 @@ export default function ClientLayout({
           buttonTextColor="#fff"
           ease="power3.out"
         />
-
-      </GlobalMouseProvider>
-
     </>
   );
 }

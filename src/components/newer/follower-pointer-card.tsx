@@ -1,46 +1,60 @@
-'use client'
+"use client"
 
-import React, { useEffect, useState } from "react";
+// Core component that receives mouse positions and renders pointer and content
 
-import { motion, AnimatePresence, useMotionValue, MotionValue } from "motion/react";
-import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react"
+
+import { motion, AnimatePresence, useMotionValue, type MotionValue } from "motion/react"
+import { cn } from "@/lib/utils"
+import { ArrowRight } from "lucide-react"
 
 export const FollowerPointerCard = ({
     children,
     className,
     title,
 }: {
-    children: React.ReactNode;
-    className?: string;
-    title?: string | React.ReactNode;
+    children: React.ReactNode
+    className?: string
+    title?: string | React.ReactNode
 }) => {
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-    const ref = React.useRef<HTMLDivElement>(null);
-    const [rect, setRect] = useState<DOMRect | null>(null);
-    const [isInside, setIsInside] = useState<boolean>(false); // Add this line
+    const x = useMotionValue(0)
+    const y = useMotionValue(0)
+    const ref = React.useRef<HTMLDivElement>(null)
+    const [rect, setRect] = useState<DOMRect | null>(null)
+    const [isInside, setIsInside] = useState<boolean>(false)
 
     useEffect(() => {
-        if (ref.current) {
-            setRect(ref.current.getBoundingClientRect());
+        const updateRect = () => {
+            if (ref.current) {
+                setRect(ref.current.getBoundingClientRect())
+            }
         }
-    }, []);
+
+        updateRect()
+        window.addEventListener("scroll", updateRect)
+        window.addEventListener("resize", updateRect)
+
+        return () => {
+            window.removeEventListener("scroll", updateRect)
+            window.removeEventListener("resize", updateRect)
+        }
+    }, [])
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (rect) {
-            const scrollX = window.scrollX;
-            const scrollY = window.scrollY;
-            x.set(e.clientX - rect.left + scrollX);
-            y.set(e.clientY - rect.top + scrollY);
+            const size = 96 // your pointer width/height in px
+            x.set(e.clientX - rect.left - size / 2)
+            y.set(e.clientY - rect.top - size / 2)
+
         }
-    };
+    }
     const handleMouseLeave = () => {
-        setIsInside(false);
-    };
+        setIsInside(false)
+    }
 
     const handleMouseEnter = () => {
-        setIsInside(true);
-    };
+        setIsInside(true)
+    }
     return (
         <div
             onMouseLeave={handleMouseLeave}
@@ -52,64 +66,51 @@ export const FollowerPointerCard = ({
             ref={ref}
             className={cn("relative", className)}
         >
-            <AnimatePresence>
-                {isInside && <FollowPointer x={x} y={y} title={title} />}
-            </AnimatePresence>
+            <AnimatePresence>{isInside && <FollowPointer x={x} y={y} />}</AnimatePresence>
             {children}
         </div>
-    );
-};
+    )
+}
 
 export const FollowPointer = ({
     x,
     y,
-    title,
 }: {
-    x: MotionValue;
-    y: MotionValue;
-    title?: string | React.ReactNode;
+    x: MotionValue
+    y: MotionValue
 }) => {
-
     return (
         <motion.div
-            className="absolute z-50 h-4 w-4 rounded-full"
+            className="fixed z-50 h-24 w-24 rounded-full bg-orange-300 flex items-center justify-center"
             style={{
                 top: y,
                 left: x,
                 pointerEvents: "none",
+                boxShadow: "0 0 20px rgba(251, 146, 60, 0.5), 0 0 40px rgba(251, 146, 60, 0.3)",
             }}
+
             initial={{
-                scale: 1,
+                scale: 0,
                 opacity: 1,
+                rotate: 0
             }}
             animate={{
                 scale: 1,
                 opacity: 1,
+                rotate: -45
             }}
             exit={{
                 scale: 0,
                 opacity: 0,
+                rotate: 0
+            }}
+            transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
             }}
         >
-            <motion.div
-                initial={{
-                    scale: 0.5,
-                    opacity: 0,
-                }}
-                animate={{
-                    scale: 1,
-                    opacity: 1,
-                }}
-                exit={{
-                    scale: 0.5,
-                    opacity: 0,
-                }}
-                className={
-                    "min-w-max rounded-full bg-neutral-200 px-2 py-2 text-xs whitespace-nowrap text-white bg-orange-300"
-                }
-            >
-                {title || `William Shakespeare`}
-            </motion.div>
+            <ArrowRight className="text-black scale-125" />
         </motion.div>
-    );
-};
+    )
+}
