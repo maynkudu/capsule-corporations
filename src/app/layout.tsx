@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/lenis/smooth-scroll";
 import CookiePopup from "@/components/common/cookie-popup";
+import ClientLayout from "./layout-client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,12 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
       >
-        <CookiePopup/>
-        <SmoothScroll>
+        <ClientLayout>
           {children}
-        </SmoothScroll>
+        </ClientLayout>
       </body>
     </html>
   );
